@@ -68,90 +68,185 @@ export default function Home() {
 
       {/* Seção de Resultados da Pesquisa */}
       {searchTerm.trim() !== "" && filteredMedications.length > 0 && (
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-blue-700 mb-4 border-b-2 border-blue-200 pb-2">
+        <div className="mb-12 space-y-8">
+          <h2 className="text-2xl font-semibold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">
             Resultados da Pesquisa para &quot;{searchTerm}&quot;
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-8">
             {filteredMedications.map((med) => (
               <div
                 key={med.id}
-                className="bg-white p-6 rounded-lg shadow-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300"
+                className="bg-white p-8 rounded-xl shadow-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300 space-y-6"
               >
-                <h3 className="text-xl font-bold text-blue-800 mb-2">
-                  {med.name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  <span className="font-semibold">Categorias:</span>{" "}
-                  {med.categories.join(", ")}
-                </p>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-blue-800">
+                    {med.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {med.categories.map((cat, i) => (
+                      <span
+                        key={i}
+                        className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium"
+                      >
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 {med.presentation && (
-                  <p className="text-sm text-gray-600 mb-2">
-                    <span className="font-semibold">Apresentação:</span>{" "}
-                    {med.presentation}
-                  </p>
-                )}
-                {med.doses.length > 0 && (
-                  <div className="mb-2">
-                    <p className="font-semibold text-gray-700">Doses:</p>
-                    <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
-                      {med.doses.map((dose, index) => (
-                        <li key={index}>
-                          <strong>{dose.type}:</strong> {dose.value}
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="space-y-2">
+                    <p className="font-semibold text-gray-700">Apresentação:</p>
+                    <p className="text-gray-600 pl-4">{med.presentation}</p>
                   </div>
                 )}
-                {med.dilutionAndPreparation &&
-                  med.dilutionAndPreparation.length > 0 && (
-                    <div className="mb-2">
-                      <p className="font-semibold text-gray-700">
-                        Diluição e Preparo / Macetes / Cálculos:
-                      </p>
-                      <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
-                        {/* Usando dangerouslySetInnerHTML para renderizar `código` como <code> */}
-                        {med.dilutionAndPreparation.map((item, index) => (
-                          <li
-                            key={index}
-                            dangerouslySetInnerHTML={{
-                              __html: item.replace(
-                                /`(.*?)`/g,
-                                '<code class="bg-gray-100 text-purple-700 px-1 py-0.5 rounded text-xs">$&</code>'
-                              ),
-                            }}
-                          ></li>
+
+                {med.doses.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="font-semibold text-gray-700">Doses:</p>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <ul className="space-y-3">
+                        {med.doses.map((dose, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="inline-block bg-blue-100 text-blue-800 rounded-full p-1 mr-2 mt-1">
+                              <svg
+                                className="w-3 h-3"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+                              </svg>
+                            </span>
+                            <div>
+                              <strong className="text-blue-700">
+                                {dose.type}:
+                              </strong>
+                              <p className="text-gray-600">{dose.value}</p>
+                            </div>
+                          </li>
                         ))}
                       </ul>
                     </div>
-                  )}
-                {med.observations && med.observations.length > 0 && (
-                  <div className="mb-2">
-                    <p className="font-semibold text-gray-700">Observações:</p>
-                    <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
-                      {med.observations.map((obs, index) => (
-                        <li key={index}>{obs}</li>
-                      ))}
-                    </ul>
                   </div>
                 )}
-                {med.antidote && (
-                  <p className="text-sm text-gray-600 mb-4">
-                    <span className="font-semibold">Antídoto:</span>{" "}
-                    {med.antidote}
-                  </p>
+
+                {med.dilutionAndPreparation &&
+                  med.dilutionAndPreparation.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-semibold text-gray-700">
+                        Diluição e Preparo:
+                      </p>
+                      <div className="bg-blue-50 p-4 rounded-lg">
+                        <ul className="space-y-3">
+                          {med.dilutionAndPreparation.map((item, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="inline-block bg-blue-200 text-blue-800 rounded-full p-1 mr-2 mt-1">
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </span>
+                              <div
+                                className="text-gray-600"
+                                dangerouslySetInnerHTML={{
+                                  __html: item.replace(
+                                    /`(.*?)`/g,
+                                    '<code class="bg-gray-200 text-purple-700 px-1.5 py-0.5 rounded text-xs">$1</code>'
+                                  ),
+                                }}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
+                {med.observations && med.observations.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="font-semibold text-gray-700">
+                      Observações Importantes:
+                    </p>
+                    <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-300">
+                      <ul className="space-y-3">
+                        {med.observations.map((obs, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="inline-block bg-yellow-200 text-yellow-800 rounded-full p-1 mr-2 mt-1">
+                              <svg
+                                className="w-3 h-3"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </span>
+                            <p className="text-gray-600">{obs}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 )}
-                <p className="text-sm text-blue-600 font-semibold mt-4">
+
+                {med.antidote && (
+                  <div className="space-y-2">
+                    <p className="font-semibold text-gray-700">Antídoto:</p>
+                    <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-300">
+                      <div className="flex items-center">
+                        <span className="inline-block bg-red-200 text-red-800 rounded-full p-1 mr-3">
+                          <svg
+                            className="w-4 h-4"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </span>
+                        <p className="text-gray-600 font-medium">
+                          {med.antidote}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-4 border-t border-gray-200">
                   <a
                     href={med.whereToFindInfoLink}
-                    target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:underline flex items-center"
+                    className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium hover:underline"
                   >
-                    Onde encontrar as melhores informações{" "}
-                    <span className="ml-1 text-base">🔗</span>
+                    <span>Consultar informações detalhadas</span>
+                    <svg
+                      className="w-4 h-4 ml-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
                   </a>
-                </p>
+                </div>
               </div>
             ))}
           </div>
