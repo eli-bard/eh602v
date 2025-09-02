@@ -1,350 +1,388 @@
-"use client";
+// page.tsx
+"use client"; // Marca como um Client Component para permitir interatividade (hooks como useState)
 
-import React, { useState, useMemo } from "react";
-import { Search, Pill, AlertCircle, Info, ExternalLink } from "lucide-react";
+import React, { useState } from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Medicamentos } from "@/components/specifics/medicamentos/medicamentos";
+  Medication,
+  medications,
+} from "@/components/specifics/medicamentos/medicamentos"; // Ajuste o caminho de importação conforme sua estrutura de pastas
 
-// Tipo para medicamento
-interface Medication {
-  id: string;
-  nome: string;
-  categoria: string;
-  doseneo: string;
-  doseped: string;
-  apresentacoes: string;
-  contraindicacoes: string;
-  orientacoes: string;
-  observacao: string;
-  links: {
-    consultaRemedios: string;
-    anvisa: string;
-    guiaFarmaceutico: string;
-  };
-}
-
-// Base de dados estática de medicamentos
-const medications: Medication[] = Medicamentos;
-
-// Componente principal
-export default function MedicationLookup() {
+export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [selectedMedication, setSelectedMedication] =
-    useState<Medication | null>(null);
+  const [filteredMedications, setFilteredMedications] = useState<Medication[]>(
+    []
+  );
 
-  // Obter categorias únicas
-  const categories = useMemo(() => {
-    const cats = Array.from(new Set(medications.map((med) => med.categoria)));
-    return ["Todos", ...cats];
-  }, []);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchTerm(query);
 
-  // Filtrar medicamentos
-  const filteredMedications = useMemo(() => {
-    return medications.filter((med) => {
-      const matchesSearch =
-        med.nome.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "Todos" || med.categoria === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchTerm, selectedCategory]);
+    if (query.trim() === "") {
+      setFilteredMedications([]); // Limpa os resultados se o termo de busca estiver vazio
+      return;
+    }
+
+    // Filtra as medicações pelo nome ou por qualquer uma de suas categorias
+    const results = medications.filter(
+      (med) =>
+        med.name.toLowerCase().includes(query) ||
+        med.categories.some((category) =>
+          category.toLowerCase().includes(query)
+        )
+    );
+    setFilteredMedications(results);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center items-center gap-3 mb-4">
-            <div className="bg-blue-600 dark:bg-blue-800 p-3 rounded-full">
-              <Pill className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-              Consulta de Medicamentos
-            </h1>
+    <div className="container mx-auto p-4 md:p-8 font-sans">
+      <h1 className="text-3xl md:text-4xl font-bold text-blue-800 mb-6 text-center">
+        Guia de Medicamentos Pediátricos e Neonatais 🧑‍⚕️
+      </h1>
+
+      <p className="text-gray-700 text-lg mb-8 text-center max-w-2xl mx-auto">
+        Bem-vindo! Esta página foi desenvolvida para facilitar a consulta de
+        informações sobre medicações e condutas em pediatria, com foco no
+        cuidado de recém-nascidos e cálculos de dosagens. Utilize a barra de
+        pesquisa abaixo para encontrar rapidamente o que você precisa. Não temos
+        todas as medicações, e apenas visamos facilitar a consulta. As melhores
+        informações sempre são provenientes de fontes oficiais.
+      </p>
+
+      {/* Seção de Pesquisa */}
+      <div className="mb-8 p-4 bg-blue-50 rounded-lg shadow-md">
+        <label
+          htmlFor="search"
+          className="block text-lg font-semibold text-blue-700 mb-2"
+        >
+          Pesquisar Medicamentos (por nome ou categoria) 🔎
+        </label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Ex: Fentanil, Sedativo, Amina vasoativa..."
+          className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 outline-none"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+
+      {/* Seção de Resultados da Pesquisa */}
+      {searchTerm.trim() !== "" && filteredMedications.length > 0 && (
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold text-blue-700 mb-4 border-b-2 border-blue-200 pb-2">
+            Resultados da Pesquisa para &quot;{searchTerm}&quot;
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredMedications.map((med) => (
+              <div
+                key={med.id}
+                className="bg-white p-6 rounded-lg shadow-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300"
+              >
+                <h3 className="text-xl font-bold text-blue-800 mb-2">
+                  {med.name}
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  <span className="font-semibold">Categorias:</span>{" "}
+                  {med.categories.join(", ")}
+                </p>
+                {med.presentation && (
+                  <p className="text-sm text-gray-600 mb-2">
+                    <span className="font-semibold">Apresentação:</span>{" "}
+                    {med.presentation}
+                  </p>
+                )}
+                {med.doses.length > 0 && (
+                  <div className="mb-2">
+                    <p className="font-semibold text-gray-700">Doses:</p>
+                    <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
+                      {med.doses.map((dose, index) => (
+                        <li key={index}>
+                          <strong>{dose.type}:</strong> {dose.value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {med.dilutionAndPreparation &&
+                  med.dilutionAndPreparation.length > 0 && (
+                    <div className="mb-2">
+                      <p className="font-semibold text-gray-700">
+                        Diluição e Preparo / Macetes / Cálculos:
+                      </p>
+                      <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
+                        {/* Usando dangerouslySetInnerHTML para renderizar `código` como <code> */}
+                        {med.dilutionAndPreparation.map((item, index) => (
+                          <li
+                            key={index}
+                            dangerouslySetInnerHTML={{
+                              __html: item.replace(
+                                /`(.*?)`/g,
+                                '<code class="bg-gray-100 text-purple-700 px-1 py-0.5 rounded text-xs">$&</code>'
+                              ),
+                            }}
+                          ></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                {med.observations && med.observations.length > 0 && (
+                  <div className="mb-2">
+                    <p className="font-semibold text-gray-700">Observações:</p>
+                    <ul className="list-disc list-inside text-sm text-gray-600 ml-4 space-y-1">
+                      {med.observations.map((obs, index) => (
+                        <li key={index}>{obs}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {med.antidote && (
+                  <p className="text-sm text-gray-600 mb-4">
+                    <span className="font-semibold">Antídoto:</span>{" "}
+                    {med.antidote}
+                  </p>
+                )}
+                <p className="text-sm text-blue-600 font-semibold mt-4">
+                  <a
+                    href={med.whereToFindInfoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline flex items-center"
+                  >
+                    Onde encontrar as melhores informações{" "}
+                    <span className="ml-1 text-base">🔗</span>
+                  </a>
+                </p>
+              </div>
+            ))}
           </div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
-            Sistema de consulta rápida para informações sobre medicamentos
+        </div>
+      )}
+
+      {/* Mensagem de "Não encontrado" */}
+      {searchTerm.trim() !== "" && filteredMedications.length === 0 && (
+        <div className="mb-12 p-6 bg-yellow-50 rounded-lg shadow-md text-center">
+          <p className="text-xl text-yellow-800">
+            Nenhuma medicação encontrada para &quot;{searchTerm}&quot;. Por
+            favor, tente um termo diferente. 🤷‍♀️
           </p>
         </div>
+      )}
 
-        {/* Filtros */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-white">
-              <Search className="w-5 h-5" />
-              Buscar Medicamentos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
-                  Pesquisar por nome
-                </label>
-                <Input
-                  placeholder="Digite o nome do medicamento..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 dark:text-gray-300">
-                  Categoria
-                </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
+      {/* Seções de Informações Gerais / Protocolos (Exibição Estática) */}
+      {(searchTerm.trim() === "" || filteredMedications.length === 0) && (
+        <>
+          <div className="mb-12 p-6 bg-green-50 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold text-green-700 mb-4 border-b-2 border-green-200 pb-2">
+              Princípios Gerais: Aminas Vasoativas e Inotrópicos ✨
+            </h2>
+            <p className="text-gray-700 mb-2">
+              Ao lidar com aminas vasoativas e inotrópicos, é crucial entender a
+              distinção entre doses alfa e beta:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 ml-4 space-y-1">
+              <li>
+                <span className="font-bold">Dose Alfa (α):</span>{" "}
+                Predominantemente vasoconstrição.
+              </li>
+              <li>
+                <span className="font-bold">Dose Beta (β):</span> β1: efeito
+                inotrópico (aumento da contratilidade cardíaca); β2:
+                vasodilatação, broncodilatação.
+              </li>
+            </ul>
+          </div>
+
+          <div className="mb-12 p-6 bg-purple-50 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4 border-b-2 border-purple-200 pb-2">
+              Protocolos Específicos para Intubação Orotraqueal (IOT) 💡
+            </h2>
+            <p className="text-gray-700 mb-4">
+              A IOT em pediatria exige uma sequência rápida e bem planejada para
+              garantir a segurança do paciente.
+            </p>
+
+            <h3 className="text-xl font-semibold text-purple-600 mb-3">
+              1. Sequência Rápida de IOT Pediátrica (SRIOT)
+            </h3>
+            <div className="ml-4 mb-6">
+              <h4 className="font-semibold text-purple-500 mb-2">
+                1. Pré-medicação:
+              </h4>
+              <ul className="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                <li>
+                  <span className="font-bold">Lidocaína:</span> 1-2 mg/kg
+                  (Ampola 10 mg/mL).
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,1 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Vantagens:</span> Ação
+                      broncodilatadora e redução da PIC.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-bold">Atropina:</span> 0,02 mg/kg
+                  (Ampola 0,25 mg/mL).
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,08 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Vantagem:</span> Diminui
+                      resposta vagal em crianças pequenas.
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+
+              <h4 className="font-semibold text-purple-500 mb-2 mt-4">
+                2. Sedação e Analgesia para Procedimento:
+              </h4>
+              <ul className="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                <li>
+                  <span className="font-bold">Propofol:</span> 1-2 mg/kg/dose
+                  (Ampola 10 mg/mL).
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,1 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Vantagem:</span> Menor
+                      depressão cardíaca.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-bold">Cetamina:</span> 1-2 mg/kg/dose
+                  (Ampola 50 mg/mL).
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,04 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Vantagens:</span>{" "}
+                      Broncodilatador, aumenta FC e PA.
+                    </li>
+                    <li>
+                      <span className="font-medium">Observação:</span> Ideal
+                      associar com um Benzodiazepínico para reduzir chance de
+                      alucinação.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-bold">Midazolam:</span> 0,1-0,2
+                  mg/kg/dose.
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,04 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Vantagens:</span> Rápido
+                      início de ação, causa amnésia e tem ação
+                      anticonvulsivante.
+                    </li>
+                    <li>
+                      <span className="font-medium">Desvantagens:</span> Evitado
+                      em caso de choque, pode reduzir PA.
+                    </li>
+                    <li>
+                      <span className="font-medium">Antídoto:</span> Flumazenil.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-bold">Fentanil:</span> 2-4 mcg/kg (EV).
+                </li>
+              </ul>
+
+              <h4 className="font-semibold text-purple-500 mb-2 mt-4">
+                3. Bloqueador Neuromuscular:
+              </h4>
+              <ul className="list-disc list-inside text-gray-700 ml-4 space-y-1">
+                <li>
+                  <span className="font-bold">Rocurônio:</span> 0,6-1,2
+                  mg/kg/dose (Ampola 10 mg/mL).
+                  <ul className="list-circle list-inside ml-4 space-y-0.5">
+                    <li>
+                      <span className="font-medium">Macete:</span> Peso (kg) x
+                      0,05 mL.
+                    </li>
+                    <li>
+                      <span className="font-medium">Antagonista:</span>{" "}
+                      Sugamadex.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-bold">Succinilcolina:</span> 1-1,5 mg/kg
+                  (EV) ou 2-3 mg/kg (IM).
+                </li>
+              </ul>
             </div>
-          </CardContent>
-        </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Lista de medicamentos */}
-          <div className="lg:col-span-1">
-            <Card className="dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="dark:text-white">
-                  Medicamentos Encontrados ({filteredMedications.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="max-h-96 overflow-y-auto">
-                <div className="space-y-2">
-                  {filteredMedications.map((med) => (
-                    <Button
-                      key={med.id}
-                      variant={
-                        selectedMedication?.id === med.id
-                          ? "default"
-                          : "outline"
-                      }
-                      className="w-full justify-start text-left p-3 h-auto dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                      onClick={() => setSelectedMedication(med)}
-                    >
-                      <div>
-                        <div className="font-semibold">{med.nome}</div>
-                        <Badge
-                          variant="secondary"
-                          className="mt-1 text-xs dark:bg-gray-600"
-                        >
-                          {med.categoria}
-                        </Badge>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <h3 className="text-xl font-semibold text-purple-600 mb-3 mt-8">
+              2. Sequência Rápida de IOT em Neonatologia
+            </h3>
+            <p className="text-gray-700 mb-2">
+              Algumas particularidades importantes para neonatos:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 ml-4 space-y-1">
+              <li>
+                <span className="font-bold">Atropina:</span> 0,25 mg/mL - Fazer
+                0,08 mL/kg.
+              </li>
+              <li>
+                <span className="font-bold">Fentanil:</span> 50 mcg/mL. Fazer
+                diluído para diminuir rigidez torácica.
+                <ul className="list-circle list-inside ml-4 space-y-0.5">
+                  <li>
+                    <span className="font-medium">Diluição:</span> 1 mL de
+                    Fentanil em 9 mL de SF 0,9% (solução de 5 mcg/mL).
+                  </li>
+                  <li>
+                    <span className="font-medium">Dose:</span> Dessa solução,
+                    fazer 0,1 a 0,2 mL/kg (que dará a dose de 0,5 a 1 mcg/kg).
+                  </li>
+                  <li>
+                    <span className="font-medium">Observação:</span> Se houver
+                    rigidez torácica, considerar Naloxona (0,1 mL/kg em bolus).
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-bold">Rocurônio:</span> 0,05 a 0,1 mL/kg.
+                <ul className="list-circle list-inside ml-4 space-y-0.5">
+                  <li>
+                    <span className="font-medium">Macete:</span> Peso (kg) / 10
+                    (arredondar para baixo).
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-bold">
+                  OBSERVAÇÕES IMPORTANTES EM NEONATOLOGIA:
+                </span>
+                <ul className="list-circle list-inside ml-4 space-y-0.5">
+                  <li>
+                    Evitar benzodiazepínicos e cetamina em neonatos devido aos
+                    potenciais efeitos adversos (principalmente hipotensão e
+                    efeitos no SNC imaturo).
+                  </li>
+                  <li>Antagonista do Rocurônio: Sugamadex.</li>
+                </ul>
+              </li>
+            </ul>
           </div>
-
-          {/* Detalhes do medicamento */}
-          <div className="lg:col-span-2">
-            {selectedMedication ? (
-              <Card className="dark:bg-gray-800">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 dark:text-white">
-                    <Pill className="w-5 h-5" />
-                    {selectedMedication.nome}
-                  </CardTitle>
-                  <CardDescription className="dark:text-gray-400">
-                    {selectedMedication.categoria}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="geral" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 dark:bg-gray-700">
-                      <TabsTrigger
-                        value="geral"
-                        className="dark:data-[state=active]:bg-gray-600 dark:data-[state=active]:text-white"
-                      >
-                        Informações Gerais
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="dosagem"
-                        className="dark:data-[state=active]:bg-gray-600 dark:data-[state=active]:text-white"
-                      >
-                        Dosagem
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="links"
-                        className="dark:data-[state=active]:bg-gray-600 dark:data-[state=active]:text-white"
-                      >
-                        Links de Apoio
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="geral" className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <h4 className="font-semibold mb-2 dark:text-white">
-                            Apresentações
-                          </h4>
-                          <p className="text-sm bg-gray-50 dark:bg-gray-700 p-3 rounded dark:text-gray-300">
-                            {selectedMedication.apresentacoes}
-                          </p>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold mb-2 dark:text-white">
-                            Orientações
-                          </h4>
-                          <p className="text-sm bg-gray-50 dark:bg-gray-700 p-3 rounded dark:text-gray-300">
-                            {selectedMedication.orientacoes}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="font-semibold mb-2 flex items-center gap-2 dark:text-white">
-                          <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
-                          Contraindicações
-                        </h4>
-                        <Alert className="dark:bg-red-900/30 dark:border-red-800">
-                          <AlertDescription className="dark:text-red-200">
-                            {selectedMedication.contraindicacoes}
-                          </AlertDescription>
-                        </Alert>
-                      </div>
-
-                      {selectedMedication.observacao && (
-                        <div>
-                          <h4 className="font-semibold mb-2 flex items-center gap-2 dark:text-white">
-                            <Info className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                            Observação
-                          </h4>
-                          <p className="text-sm bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800/50 dark:text-blue-200">
-                            {selectedMedication.observacao}
-                          </p>
-                        </div>
-                      )}
-                    </TabsContent>
-
-                    <TabsContent value="dosagem" className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <h4 className="font-semibold mb-2 dark:text-white">
-                            Dose Neonatal
-                          </h4>
-                          <p className="text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded border border-green-200 dark:border-green-800/50 dark:text-green-200">
-                            {selectedMedication.doseneo}
-                          </p>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold mb-2 dark:text-white">
-                            Dose Pediátrica
-                          </h4>
-                          <p className="text-sm bg-orange-50 dark:bg-orange-900/20 p-3 rounded border border-orange-200 dark:border-orange-800/50 dark:text-orange-200">
-                            {selectedMedication.doseped}
-                          </p>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="links" className="space-y-4">
-                      <div className="grid grid-cols-1 gap-4">
-                        <Card className="dark:bg-gray-700">
-                          <CardHeader className="pb-3">
-                            <CardTitle className="text-lg dark:text-white">
-                              Links de Referência
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-3">
-                            <a
-                              href={selectedMedication.links.consultaRemedios}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4 dark:text-blue-400" />
-                              <div>
-                                <div className="font-semibold dark:text-blue-300">
-                                  Consulta Remédios
-                                </div>
-                                <div className="text-sm text-gray-600 dark:text-blue-200">
-                                  Informações comerciais e preços
-                                </div>
-                              </div>
-                            </a>
-
-                            <a
-                              href={selectedMedication.links.anvisa}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg hover:bg-green-100 dark:hover:bg-green-800/50 transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4 dark:text-green-400" />
-                              <div>
-                                <div className="font-semibold dark:text-green-300">
-                                  ANVISA - Bulário
-                                </div>
-                                <div className="text-sm text-gray-600 dark:text-green-200">
-                                  Bula oficial registrada
-                                </div>
-                              </div>
-                            </a>
-
-                            <a
-                              href={selectedMedication.links.guiaFarmaceutico}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-800/50 transition-colors"
-                            >
-                              <ExternalLink className="w-4 h-4 dark:text-purple-400" />
-                              <div>
-                                <div className="font-semibold dark:text-purple-300">
-                                  Guia Farmacêutico HSL
-                                </div>
-                                <div className="text-sm text-gray-600 dark:text-purple-200">
-                                  Guia técnico hospitalar
-                                </div>
-                              </div>
-                            </a>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="dark:bg-gray-800">
-                <CardContent className="flex items-center justify-center h-96">
-                  <div className="text-center">
-                    <Pill className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
-                      Selecione um medicamento
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      Escolha um medicamento da lista para ver os detalhes
-                      completos
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

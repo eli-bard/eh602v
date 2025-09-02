@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 type Option = {
   label: string;
@@ -51,10 +50,6 @@ const tamanhoMamilo: Option[] = [
   {
     label: "Puntiforme, aréola de borda elevado > 0,75 cm (15 pontos)",
     value: 15,
-  },
-  {
-    label: "Grossa, apergaminhada com sulcos profundos (20 pontos)",
-    value: 20,
   },
 ];
 
