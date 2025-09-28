@@ -28,4 +28,12 @@ export const emergencias: Emergencias[] = [
     description:
       "Insira nome, peso e idade e obtenha uma folha rápida de condução de PCR em pediatria",
   },
+  {
+    id: "tce",
+    title: "TCE",
+    icon: "Baby",
+    iconColor: "text-green-500",
+    bgColor: "bg-green-100",
+    description: "Avalie o risco e grau do TCE do seu paciente",
+  },
 ];

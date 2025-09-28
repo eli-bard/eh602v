@@ -5,7 +5,7 @@ export default function IdadeNeonatal() {
   // Estados para os inputs
   const [dataNascimento, setDataNascimento] = useState<string>("");
   const [horaNascimento, setHoraNascimento] = useState<string>("");
-  const [semanasGestacao, setSemanasGestacao] = useState<number>(40);
+  const [semanasGestacao, setSemanasGestacao] = useState<number>(0);
   const [diasGestacao, setDiasGestacao] = useState<number>(0);
 
   // Estados para os resultados

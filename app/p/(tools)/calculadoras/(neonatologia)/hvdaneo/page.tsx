@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 export default function HidratacaoVenosa() {
   // Estados para os inputs

@@ -33,6 +33,16 @@ export const calculators: Calculadoras[] = [
     category: "Neonatologia",
   },
   {
+    id: "sarnat",
+    title: "Sarnat & Sarnat",
+    icon: "Baby",
+    iconColor: "text-blue-500",
+    bgColor: "bg-blue-100",
+    description:
+      "Avaliação da escala de Sarnat & Sarnat para indicação de hipotermia terapêutica",
+    category: "Neonatologia",
+  },
+  {
     id: "fototerapia",
     title: "Icterícia neonatal",
     icon: "Baby",
