@@ -176,7 +176,7 @@ export default function IdadeNeonatal() {
               className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 dark:text-white"
               value={semanasGestacao}
               onChange={(e) =>
-                setSemanasGestacao(parseInt(e.target.value) || 40)
+                setSemanasGestacao(parseInt(e.target.value) || 0)
               }
               required
             />

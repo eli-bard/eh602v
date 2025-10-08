@@ -107,7 +107,7 @@ export default function OfertaNutricional() {
       </h1>
       <h5 className="font-bold dark:text-gray-300">
         Conforme os seguintes valores padrão de oferta conforme 100 mL de
-        fórmula
+        fórmula -- Última atualização Abril-2025
       </h5>
 
       <Image

@@ -1,10 +1,9 @@
 export const ebooksGratuitos = [
   {
     id: 1,
-    titulo: "Primeiros Socorros em Casa - em produção",
-    descricao:
-      "O que fazer em situações de emergência antes de procurar ajuda médica.",
-    tags: ["Emergência", "Primeiros Socorros", "Pais"],
+    titulo: "Atualmente não temos materiais",
+    descricao: "Estamos trabalhando nisso.",
+    tags: ["Em produção"],
     link: "/not-found",
   },
 ];

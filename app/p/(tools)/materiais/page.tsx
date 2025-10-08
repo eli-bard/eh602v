@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ebooksGratuitos } from "@/app/p/(tools)/materiais/ebooks-grauitos";
 import { ebooksPagos } from "@/app/p/(tools)/materiais/ebooks-pagos";
+import Link from "next/link";
 
 export default function PaisEPacientes() {
   return (
@@ -101,7 +102,7 @@ export default function PaisEPacientes() {
                 </h2>
               </div>
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                Ebooks completos disponíveis para compra
+                Materiais completos disponíveis para compra
               </p>
             </div>
 
@@ -133,10 +134,13 @@ export default function PaisEPacientes() {
                       <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                         {ebook.preco}
                       </span>
-                      <Button>
-                        A publicação está em processo
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
+
+                      <Link href={"https://fundamentumelisio.com.br"}>
+                        <Button>
+                          A publicação está em processo
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                   {ebook.tags && (
