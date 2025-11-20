@@ -65,8 +65,8 @@ const DashboardHome = () => {
           Seja muito bem-vindo!!
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-base text-center">
-          Aprenda mais rápido - Aproveite os benefícios de uma IA dedicada e um
-          preceptor disponível 24/7
+          Aprenda mais rápido com EliHelp - Aproveite os benefícios do que a IA
+          dedicada ao bom uso educacional pode fazer.
         </p>
       </div>
 

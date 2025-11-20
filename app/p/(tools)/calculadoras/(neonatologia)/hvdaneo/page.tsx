@@ -30,20 +30,18 @@ export default function HidratacaoVenosa() {
 
   // Objeto de concentrações
   const concentracoes = {
-    glucal10: { mEq: 0.45 }, // Gluconato de Cálcio 10% → 0.45 mEq/mL
-    nacl20: { mEq: 3.4 }, // NaCl 20% → 3.4 mEq/mL
-    nacl10: { mEq: 1.7 }, // NaCl 10% → 1.7 mEq/mL
-    kcl10: { mEq: 1.34 }, // KCl 10% → 1.34 mEq/mL
-    kcl191: { mEq: 2.56 }, // KCl 19,1% → 2.56 mEq/mL
+    glucal10: { mEq: 0.5 },
+    nacl20: { mEq: 3.4 },
+    nacl10: { mEq: 1.7 },
+    kcl10: { mEq: 1.34 },
+    kcl191: { mEq: 2.56 },
   };
 
   // Função de cálculo
   const calcularHVNeo = () => {
-    // Calcular valores conforme fórmulas
     const volumeTotal = peso * oh;
     const gramasGlicose = vig * peso * 1.44;
 
-    // Calcular volumes (ajustando pela concentração em mEq/mL)
     const volumeCalcio =
       (peso * ca) /
       concentracoes[apresentacaoCa as keyof typeof concentracoes].mEq;
@@ -59,19 +57,18 @@ export default function HidratacaoVenosa() {
 
     const aaa = gramasGlicose * 100;
     const bbb = volumeParaGlicose * 5;
-    const volumeGlicose50 = (aaa - bbb) / 45;
+    const ccc = (aaa - bbb) / 45;
+    const volumeGlicose50 = Math.abs(ccc);
     const volumeGlicosado5 = volumeParaGlicose - volumeGlicose50;
 
     const concentracaoGlicose = (gramasGlicose / volumeTotal) * 100;
     const vazao = volumeTotal / 24;
 
-    // Verificar concentração de glicose
     let alertaGlicose = "";
     if (concentracaoGlicose > 12.5) {
       alertaGlicose = "Atenção: Concentração de glicose acima de 12.5%!";
     }
 
-    // Atualizar resultados
     setResultados({
       volumeGlicosado5,
       volumeGlicose50,
@@ -104,6 +101,43 @@ export default function HidratacaoVenosa() {
           : "";
       default:
         return "";
+    }
+  };
+
+  // Gerar texto da prescrição copiável
+  const gerarPrescricaoCopiavel = () => {
+    const volumeTotal = peso * oh;
+    return `SG 5% -------------------------- ${resultados.volumeGlicosado5.toFixed(
+      2
+    )} mL
+GH 50% ------------------------ ${resultados.volumeGlicose50.toFixed(2)} mL
+${getApresentacaoText(
+  "ca",
+  apresentacaoCa
+)} -------------- ${resultados.volumeCalcio.toFixed(2)} mL
+${getApresentacaoText(
+  "na",
+  apresentacaoNa
+)} -------------- ${resultados.volumeSodio.toFixed(2)} mL
+${getApresentacaoText(
+  "k",
+  apresentacaoK
+)} ------------ ${resultados.volumePotassio.toFixed(2)} mL
+Administrar EV em BIC a ${resultados.vazao.toFixed(2)} mL/hora
+Uso médico: ${volumeTotal.toFixed(
+      0
+    )} / ${oh} / ${vig} / ${ca} / ${na} / ${k} / ${resultados.concentracaoGlicose.toFixed(
+      2
+    )}%`;
+  };
+
+  // Copiar prescrição para área de transferência
+  const copiarPrescricao = async () => {
+    try {
+      await navigator.clipboard.writeText(gerarPrescricaoCopiavel());
+      alert("Prescrição copiada para a área de transferência!");
+    } catch (err) {
+      console.error("Falha ao copiar: ", err);
     }
   };
 
@@ -263,13 +297,13 @@ export default function HidratacaoVenosa() {
 
       {/* Resultados */}
       {resultados.mostrarResultados && (
-        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+        <div className="mt-6 space-y-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Resultados
           </h2>
 
           {resultados.alertaGlicose && (
-            <div className="mb-4 p-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md">
+            <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md border border-red-300 dark:border-red-700">
               {resultados.alertaGlicose}
             </div>
           )}
@@ -336,10 +370,75 @@ export default function HidratacaoVenosa() {
               </p>
             </div>
           </div>
+
+          {/* Detalhes dos Cálculos */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm dark:shadow-gray-900">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Concentração de Glicose Final
+              </p>
+              <p className="text-lg font-semibold dark:text-gray-100">
+                {resultados.concentracaoGlicose.toFixed(2)}%
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm dark:shadow-gray-900">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Volume Total
+              </p>
+              <p className="text-lg font-semibold dark:text-gray-100">
+                {(peso * oh).toFixed(2)} mL
+              </p>
+            </div>
+          </div>
+
+          {/* Prescrição Copiável */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                  Prescrição Médica
+                </h3>
+                <button
+                  onClick={copiarPrescricao}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                >
+                  Copiar Prescrição
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4">
+              <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900 p-4 rounded border border-gray-300 dark:border-gray-600">
+                {`SG 5% -------------------------- ${resultados.volumeGlicosado5.toFixed(
+                  2
+                )} mL
+GH 50% ------------------------ ${resultados.volumeGlicose50.toFixed(2)} mL
+${getApresentacaoText(
+  "ca",
+  apresentacaoCa
+)} -------------- ${resultados.volumeCalcio.toFixed(2)} mL
+${getApresentacaoText(
+  "na",
+  apresentacaoNa
+)} -------------- ${resultados.volumeSodio.toFixed(2)} mL
+${getApresentacaoText(
+  "k",
+  apresentacaoK
+)} ------------ ${resultados.volumePotassio.toFixed(2)} mL
+Administrar EV em BIC a ${resultados.vazao.toFixed(2)} mL/hora
+Uso médico: VT: ${(peso * oh).toFixed(
+                  2
+                )} / OH ${oh} / VIG ${vig} / Ca ${ca} / Na ${na} / K ${k} / [glic] ${resultados.concentracaoGlicose.toFixed(
+                  2
+                )}%`}
+              </pre>
+            </div>
+          </div>
         </div>
       )}
 
-      <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-8 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-4">
         <p>
           Esta ferramenta não substitui o julgamento clínico. Consulte sempre as
           diretrizes mais recentes.
