@@ -32,6 +32,15 @@ export const calculators: Calculadoras[] = [
     category: "Neonatologia",
   },
   {
+    id: "atbneo",
+    title: "Antibióticos em neonatologia",
+    icon: "Baby",
+    iconColor: "text-black-500",
+    bgColor: "bg-black-100",
+    description: "Calcule a dose dos antibióticos mais usados em neonatologia",
+    category: "Neonatologia",
+  },
+  {
     id: "capurro",
     title: "Capurro",
     icon: "Baby",
