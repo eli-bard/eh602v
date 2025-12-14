@@ -2,25 +2,10 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import {
-  ArrowRight,
-  Biohazard,
-  Calculator,
-  Paperclip,
-  ShoppingBag,
-  FileWarning,
-} from "lucide-react";
+import { ArrowRight, Calculator, FileWarning } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const tools = [
-  {
-    label: "Doses",
-    icon: Biohazard,
-    href: "/p/doses",
-    bgColor: "bg-violet-100 dark:bg-violet-900/40",
-    color: "text-violet-600 dark:text-violet-400",
-    hoverColor: "hover:bg-violet-50 dark:hover:bg-violet-900/30",
-  },
   {
     label: "Emergências",
     icon: FileWarning,
@@ -30,28 +15,12 @@ const tools = [
     hoverColor: "hover:bg-red-50 dark:hover:bg-red-900/30",
   },
   {
-    label: "Calculadoras",
+    label: "Sala de parto e ALCON",
     icon: Calculator,
     href: "/p/calculadoras",
     bgColor: "bg-amber-100 dark:bg-amber-900/40",
     color: "text-amber-600 dark:text-amber-400",
     hoverColor: "hover:bg-amber-50 dark:hover:bg-amber-900/30",
-  },
-  {
-    label: "Materiais e resumos",
-    icon: Paperclip,
-    href: "/p/materiais",
-    bgColor: "bg-emerald-100 dark:bg-emerald-900/40",
-    color: "text-emerald-600 dark:text-emerald-400",
-    hoverColor: "hover:bg-emerald-50 dark:hover:bg-emerald-900/30",
-  },
-  {
-    label: "Indicações de produtos",
-    icon: ShoppingBag,
-    href: "/p/shopping",
-    bgColor: "bg-pink-100 dark:bg-pink-900/40",
-    color: "text-pink-600 dark:text-pink-400",
-    hoverColor: "hover:bg-pink-50 dark:hover:bg-pink-900/30",
   },
 ];
 

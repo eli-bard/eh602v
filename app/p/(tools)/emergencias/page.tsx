@@ -1,7 +1,7 @@
 import { Heading } from "@/components/geral/Heading";
 import { FileWarningIcon } from "lucide-react";
-import EmergenciaCard from "@/components/dashboard/EmergenciaCard";
-import { emergencias } from "@/components/dashboard/emergencias";
+import EmergenciaCard from "@/app/p/(tools)/emergencias/EmergenciaCard";
+import { emergencias } from "@/app/p/(tools)/emergencias/emergencias";
 
 export default function Emergencias() {
   return (

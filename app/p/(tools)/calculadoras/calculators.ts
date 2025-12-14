@@ -23,6 +23,15 @@ export const calculators: Calculadoras[] = [
     category: "Neonatologia",
   },
   {
+    id: "hvdaneo",
+    title: "HV da neonatologia",
+    icon: "Baby",
+    iconColor: "text-blue-500",
+    bgColor: "bg-blue-100",
+    description: "Monte sua HV da neonatologia com cálcio, sódio e potássio",
+    category: "Neonatologia",
+  },
+  {
     id: "capurro",
     title: "Capurro",
     icon: "Baby",
@@ -30,16 +39,6 @@ export const calculators: Calculadoras[] = [
     bgColor: "bg-pink-100",
     description:
       "Calcule a idade gestacional corrigida pelo método de Capurro somático",
-    category: "Neonatologia",
-  },
-  {
-    id: "sarnat",
-    title: "Sarnat & Sarnat",
-    icon: "Baby",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-100",
-    description:
-      "Avaliação da escala de Sarnat & Sarnat para indicação de hipotermia terapêutica",
     category: "Neonatologia",
   },
   {
@@ -52,24 +51,6 @@ export const calculators: Calculadoras[] = [
     category: "Neonatologia",
   },
   {
-    id: "rodwell",
-    title: "Rodwell",
-    icon: "Baby",
-    iconColor: "text-pink-500",
-    bgColor: "bg-pink-100",
-    description: "Calcule o risco infeccioso do RN",
-    category: "Neonatologia",
-  },
-  {
-    id: "apgar",
-    title: "APGAR",
-    icon: "Baby",
-    iconColor: "text-pink-500",
-    bgColor: "bg-pink-100",
-    description: "Verifique o APGAR do RN",
-    category: "Neonatologia",
-  },
-  {
     id: "ofertasucin",
     title: "Ofertas conforme leite UCIN",
     icon: "Baby",
@@ -79,25 +60,7 @@ export const calculators: Calculadoras[] = [
       "Calcule ofertas calórica, proteica, de cálcio e de fósforo conforme o volume e o tipo de leite que o RN está recebendo",
     category: "Neonatologia",
   },
-  {
-    id: "hvdaneo",
-    title: "HV da neonatologia",
-    icon: "Baby",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-100",
-    description: "Monte sua HV da neonatologia com cálcio, sódio e potássio",
-    category: "Neonatologia",
-  },
-  {
-    id: "intergrowth21st",
-    title: "Curva de peso, PC e estatura - Intergrowht",
-    icon: "Baby",
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-100",
-    description:
-      "Diretamente para o site do intergrowth, insira os dados do seu RN e calcule o percentil em que se encontra",
-    category: "Neonatologia",
-  },
+
   // PEDIATRIA
   {
     id: "holliday",

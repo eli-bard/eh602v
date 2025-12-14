@@ -56,14 +56,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             Olá, {user!.email}!
             <LogoutButton />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="dark:border-gray-600 dark:text-gray-200"
-          >
-            <Link href="/p/perfil">Perfil</Link>
-          </Button>
         </div>
       </div>
     </header>

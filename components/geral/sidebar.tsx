@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Biohazard,
-  FileWarning,
-  Calculator,
-  Paperclip,
-  ShoppingBag,
-  Home,
-} from "lucide-react";
+import { FileWarning, Calculator, Home } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -24,11 +17,6 @@ const menuItems = [
     icon: Home,
   },
   {
-    name: "Doses",
-    href: "/p/doses",
-    icon: Biohazard,
-  },
-  {
     name: "Emergências",
     href: "/p/emergencias",
     icon: FileWarning,
@@ -37,16 +25,6 @@ const menuItems = [
     name: "Calculadoras",
     href: "/p/calculadoras",
     icon: Calculator,
-  },
-  {
-    name: "Materiais",
-    href: "/p/materiais",
-    icon: Paperclip,
-  },
-  {
-    name: "Produtos",
-    href: "/p/shopping",
-    icon: ShoppingBag,
   },
 ];
 

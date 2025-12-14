@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Heading } from "@/components/geral/Heading";
-import CalculatorCard from "@/components/dashboard/CalculatorCard";
-import { calculators } from "@/components/dashboard/calculators";
+import CalculatorCard from "@/app/p/(tools)/calculadoras/CalculatorCard";
+import { calculators } from "@/app/p/(tools)/calculadoras/calculators";
 import { Calculator, Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
