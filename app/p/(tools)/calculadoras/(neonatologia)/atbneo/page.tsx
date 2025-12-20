@@ -292,7 +292,7 @@ export default function CalculadoraAntibioticosNeonatais() {
             Calcule doses e prescrições de antibióticos para neonatologia baseado no peso, idade gestacional e dias de vida
           </p>
           <p className="text-teal-700 text-3xl font-bold">
-            Confira cada cálculo - PÁGINA AINDA EM CONSTRUÇÃO
+            Confira cada cálculo - EM FASE DE TESTES
           </p>
         </div>
 
