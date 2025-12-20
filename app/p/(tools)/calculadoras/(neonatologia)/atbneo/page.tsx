@@ -31,13 +31,10 @@ interface CalculationResult {
     concentracao: string;
     prescricao: string;
   };
-  meropenem: {
-    doseMg: number;
-    intervalo: string;
-    indicacao: string;
-    prescricao: string;
-  };
 }
+
+// Indicação de Ampicilina
+type AmpicilinaIndicacao = "septicemia" | "meningite";
 
 export default function CalculadoraAntibioticosNeonatais() {
   const [weight, setWeight] = useState<string>("");
@@ -46,6 +43,8 @@ export default function CalculadoraAntibioticosNeonatais() {
   const [currentDate, setCurrentDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  const [ampicilinaIndicacao, setAmpicilinaIndicacao] =
+    useState<AmpicilinaIndicacao>("septicemia");
 
   // Calcular dias de vida e idade corrigida
   const { daysOfLife, correctedAgeWeeks, correctedAgeDays } = useMemo(() => {
@@ -104,23 +103,36 @@ export default function CalculadoraAntibioticosNeonatais() {
     // ===== PENICILINA =====
     const penicilinaIntervalo = daysOfLife < 7 ? "12/12 horas" : "8/8 horas";
     const penicilinaDoseUI = 50000; // 50.000 UI/kg/dose
-    const penicilinaCalculo = (parsedWeight * 6) / 50 + 20;
+    const penicilinaCalculo = (parsedWeight * 6) / 50;
+    const soropenicilinaCalculo = (parsedWeight * 6) / 50 + 20;
     const penicilinaPrescricao = `Penicilina Cristalina 5.000.000 UI + Água Destilada 10 mL. Aspirar ${penicilinaCalculo.toFixed(
+      1
+    )} da solução + ${soropenicilinaCalculo.toFixed(
       1
     )} mL de SF 0,9%. Administrar ${penicilinaDoseUI.toLocaleString(
       "pt-BR"
     )} UI/kg/dose EV lento de ${penicilinaIntervalo}.`;
 
     // ===== AMPICILINA =====
-    let ampicilinaDose = 50; // mg/kg/dose
+    let ampicilinaDose = 50; // mg/kg/dose padrão para septicemia
     let ampicilinaDuracao = "10 dias ou mais";
 
-    // Para meningite GBS
-    if (daysOfLife <= 7) {
-      ampicilinaDose = 100;
-      ampicilinaDuracao = "14 dias ou mais";
-    } else if (daysOfLife > 7) {
-      ampicilinaDose = 75;
+    // Ajustar dose baseado na indicação selecionada
+    if (ampicilinaIndicacao === "septicemia") {
+      // Bacteremia/septicemia conforme tabela
+      if (gestAge <= 34 && daysOfLife > 7 && daysOfLife <= 28) {
+        ampicilinaDose = 75; // 75 mg/kg/dose para ≤34 semanas, 8-28 dias
+      } else {
+        ampicilinaDose = 50; // 50 mg/kg/dose para outras situações
+      }
+      ampicilinaDuracao = "10 dias ou mais";
+    } else if (ampicilinaIndicacao === "meningite") {
+      // Meningite GBS
+      if (daysOfLife <= 7) {
+        ampicilinaDose = 100;
+      } else {
+        ampicilinaDose = 75;
+      }
       ampicilinaDuracao = "14 dias ou mais";
     }
 
@@ -142,7 +154,11 @@ export default function CalculadoraAntibioticosNeonatais() {
     const ampicilinaCalculo = (parsedWeight * ampicilinaDose) / 100;
     const ampicilinaPrescricao = `Ampicilina 500 mg + Água destilada 5 mL. Administrar ${ampicilinaCalculo.toFixed(
       1
-    )} mL (${ampicilinaDose} mg/kg/dose) EV lento de ${ampicilinaIntervalo}. Duração: ${ampicilinaDuracao}.`;
+    )} mL (${ampicilinaDose} mg/kg/dose) EV lento de ${ampicilinaIntervalo}. Duração: ${ampicilinaDuracao}. Indicação: ${
+      ampicilinaIndicacao === "septicemia"
+        ? "Bacteremia/Septicemia"
+        : "Meningite GBS"
+    }.`;
 
     // ===== GENTAMICINA =====
     let gentamicinaDose = 4; // mg/kg
@@ -188,11 +204,11 @@ export default function CalculadoraAntibioticosNeonatais() {
     let cefepimeDose = daysOfLife < 28 ? 30 : 50; // mg/kg/dose
     const cefepimeIntervalo = "12/12 horas";
     const cefepimeCalculo = (parsedWeight * cefepimeDose) / 100;
-    const cefepimePrescricao = `Cefepime 1000 mg + Água destilada 9 mL. Aspirar ${cefepimeCalculo.toFixed(
+    const cefepimePrescricao = `Cefepime 1000 mg + Água destilada 10 mL. Aspirar ${cefepimeCalculo.toFixed(
       1
     )} mL + ${((parsedWeight * cefepimeDose) / 40).toFixed(
       1
-    )} mL de SF 0,9% EV de ${cefepimeIntervalo}.`;
+    )} mL de SF 0,9% EV de ${cefepimeIntervalo}. Concentração máxima 40 mg/mL`;
 
     // ===== VANCOMICINA =====
     const vancomicinaDose = 15; // mg/kg/dose (inicial 10-15)
@@ -218,25 +234,6 @@ export default function CalculadoraAntibioticosNeonatais() {
     )} mL + ${((parsedWeight * vancomicinaDose) / 40).toFixed(
       1
     )} mL de SG 5% EV em BIC em 1 hora de ${vancomicinaIntervalo}. Concentração máxima: 5 mg/mL.`;
-
-    // ===== MEROPENEM =====
-    let meropenemDose = 20; // mg/kg/dose
-    let meropenemIndicacao = "Sepse com suspeita de meningite";
-    const meropenemIntervalo = "8/8 horas";
-
-    if (gestAge >= 32) {
-      if (daysOfLife < 7) {
-        meropenemDose = 20;
-      } else if (daysOfLife >= 7 && daysOfLife < 28) {
-        meropenemDose = 30;
-        meropenemIndicacao = "Sepse com suspeita de meningite (1-4 semanas)";
-      }
-    }
-
-    const meropenemCalculo = (parsedWeight * meropenemDose) / 50; // Considerando apresentação de 50 mg/mL
-    const meropenemPrescricao = `Meropenem ${meropenemDose} mg/kg/dose. Administrar ${meropenemCalculo.toFixed(
-      1
-    )} mL EV de ${meropenemIntervalo}. Indicado para: ${meropenemIndicacao}.`;
 
     return {
       penicilina: {
@@ -265,12 +262,6 @@ export default function CalculadoraAntibioticosNeonatais() {
         intervalo: vancomicinaIntervalo,
         concentracao: "5 mg/mL",
         prescricao: vancomicinaPrescricao,
-      },
-      meropenem: {
-        doseMg: meropenemDose,
-        intervalo: meropenemIntervalo,
-        indicacao: meropenemIndicacao,
-        prescricao: meropenemPrescricao,
       },
     };
   }, [weight, birthDate, gestationalAge, daysOfLife]);
@@ -652,62 +643,6 @@ export default function CalculadoraAntibioticosNeonatais() {
                       copyToClipboard(calculations.vancomicina.prescricao)
                     }
                     className="mt-3 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold"
-                  >
-                    📋 Copiar Prescrição
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Meropenem */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-              <div className="bg-red-600 p-4">
-                <h3 className="text-xl font-bold text-white">Meropenem</h3>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                  <div className="text-center p-4 bg-red-50 rounded-xl">
-                    <p className="text-sm text-gray-600">Dose</p>
-                    <p className="text-2xl font-bold text-red-700">
-                      {calculations.meropenem.doseMg} mg/kg/dose
-                    </p>
-                  </div>
-                  <div className="text-center p-4 bg-red-50 rounded-xl">
-                    <p className="text-sm text-gray-600">Intervalo</p>
-                    <p className="text-2xl font-bold text-red-700">
-                      {calculations.meropenem.intervalo}
-                    </p>
-                  </div>
-                  <div className="text-center p-4 bg-red-50 rounded-xl">
-                    <p className="text-sm text-gray-600">Indicação</p>
-                    <p className="text-lg font-bold text-red-700 truncate">
-                      {calculations.meropenem.indicacao}
-                    </p>
-                  </div>
-                  <div className="text-center p-4 bg-red-50 rounded-xl">
-                    <p className="text-sm text-gray-600">Peso</p>
-                    <p className="text-2xl font-bold text-red-700">
-                      {parseFloat(weight).toFixed(1)} kg
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <label className="block text-gray-800 font-semibold mb-2">
-                    Prescrição:
-                  </label>
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-300 font-mono text-gray-800 whitespace-pre-wrap">
-                    {calculations.meropenem.prescricao}
-                  </div>
-                  <div className="mt-2 text-sm text-blue-700 bg-blue-50 p-3 rounded-lg">
-                    💡 <strong>Observação:</strong> Empírico, quando não
-                    conseguimos eliminar meningite. Duração: 2-3 semanas até
-                    melhor estabilidade.
-                  </div>
-                  <button
-                    onClick={() =>
-                      copyToClipboard(calculations.meropenem.prescricao)
-                    }
-                    className="mt-3 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
                   >
                     📋 Copiar Prescrição
                   </button>
