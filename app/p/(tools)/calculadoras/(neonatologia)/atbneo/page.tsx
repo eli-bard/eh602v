@@ -167,27 +167,27 @@ export default function CalculadoraAntibioticosNeonatais() {
     let gentamicinaDose = 4; // mg/kg
     let gentamicinaIntervalo = "24/24 horas";
 
-    if ((correctedAge <= 29 || daysOfLife <= 7) && daysOfLife <= 7) {
+    if (correctedAge <= 29 && daysOfLife <= 7) {
       gentamicinaDose = 5;
       gentamicinaIntervalo = "48/48 horas";
     } else if (
-      (correctedAge <= 29 || daysOfLife <= 7) &&
+      correctedAge <= 29 &&
       daysOfLife >= 8 &&
       daysOfLife <= 28
     ) {
       gentamicinaDose = 4;
       gentamicinaIntervalo = "36/36 horas";
-    } else if ((correctedAge <= 29 || daysOfLife <= 7) && daysOfLife >= 29) {
+    } else if ((correctedAge <= 29 && daysOfLife >= 29) {
       gentamicinaDose = 4;
       gentamicinaIntervalo = "24/24 horas";
     } else if (correctedAge >= 30 && correctedAge <= 34 && daysOfLife <= 7) {
       gentamicinaDose = 4.5;
       gentamicinaIntervalo = "36/36 horas";
     } else if (
-      correctedAge >= 30 &&
+      (correctedAge >= 30 &&
       correctedAge <= 34 &&
       daysOfLife >= 8 &&
-      daysOfLife <= 28
+      daysOfLife <= 28) || correctedAge >= 35
     ) {
       gentamicinaDose = 4;
       gentamicinaIntervalo = "24/24 horas";
