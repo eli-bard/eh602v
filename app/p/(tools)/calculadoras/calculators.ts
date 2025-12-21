@@ -81,4 +81,14 @@ export const calculators: Calculadoras[] = [
       "Calcule o volume que seu paciente pode receber como manutenção em 24h",
     category: "Pediatria",
   },
+  {
+    id: "infusaocontinua",
+    title: "Drogas de infusão contínua",
+    icon: "Baby",
+    iconColor: "text-green-500",
+    bgColor: "bg-green-100",
+    description:
+      "Calcule a dose de drogas de infusão contínua conforme algumas diluições padrão",
+    category: "Pediatria",
+  },
 ];
