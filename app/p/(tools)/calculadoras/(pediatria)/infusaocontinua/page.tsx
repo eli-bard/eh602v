@@ -112,7 +112,7 @@ export default function DrogasInfusaoContinuaPage() {
     },
     alprostadil: {
       nome: "Alprostadil (Prostin)",
-      apresentacao: 10, // mcg/mL
+      apresentacao: 20, // mcg/mL
       doseMin: 0.01,
       doseMax: 0.4,
       unidadeDose: "mcg/kg/min",
